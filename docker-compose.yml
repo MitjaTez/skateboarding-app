@@ -1,0 +1,17 @@
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    environment:
+      POSTGRES_USER: ${SKATE_USERNAME:-postgres}
+      POSTGRES_PASSWORD: ${SKATE_PASSWORD:-postgres}
+      POSTGRES_DB: ${SKATE_DATABASE:-skateboardAppDev}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
