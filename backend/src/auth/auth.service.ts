@@ -75,7 +75,6 @@ export class AuthService {
   async login(credentials: LoginDto) {
     const { email, password } = credentials;
 
-    // password is select:false, so it must be requested explicitly
     const user = await this.userRepository
       .createQueryBuilder('user')
       .addSelect('user.password')
@@ -118,7 +117,6 @@ export class AuthService {
       );
       await this.emailService.sendPasswordResetEmail(user.email, resetToken);
     }
-    // Same answer whether or not the email exists
     return { message: 'If this user exists, they will receive an email' };
   }
 
