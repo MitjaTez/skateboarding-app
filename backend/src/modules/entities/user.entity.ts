@@ -45,4 +45,7 @@ export class User {
 
   @UpdateDateColumn()
   updatedAt: Date;
+
+  @Column({ type: 'boolean', default: false })
+  isVerified: boolean;
 }
