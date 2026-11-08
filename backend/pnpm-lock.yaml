@@ -50,6 +50,9 @@ importers:
       dotenv:
         specifier: ^18.0.9
         version: 18.0.9
+      file-type:
+        specifier: ^22.3.0
+        version: 22.3.0(supports-color@7.2.0)
       pg:
         specifier: ^8.23.1
         version: 8.23.1
