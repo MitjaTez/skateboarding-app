@@ -9,3 +9,6 @@ coverage/
 *.log
 .idea/
 .vscode/
+*.tsbuildinfo
+*.tsbuildinfo
+*.tsbuildinfo
