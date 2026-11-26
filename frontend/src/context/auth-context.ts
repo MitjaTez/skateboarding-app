@@ -1,7 +1,14 @@
 "use client";
 
 import { createContext, useContext } from "react";
-import type { LoginUser, SignUpUser, UserType } from "../services/types";
+import type {
+  EditUserData,
+  ForgotPasswordData,
+  LoginUser,
+  ResetPasswordData,
+  SignUpUser,
+  UserType,
+} from "../services/types";
 
 export interface AuthContextValue {
   user: UserType | null | undefined;
@@ -9,6 +16,10 @@ export interface AuthContextValue {
   signUp: (data: SignUpUser) => Promise<unknown>;
   login: (data: LoginUser) => Promise<unknown>;
   signOut: () => void;
+  editUser: (data: EditUserData) => Promise<unknown>;
+  deleteProfile: () => void;
+  forgotPassword: (data: ForgotPasswordData) => Promise<unknown>;
+  resetPassword: (data: ResetPasswordData) => Promise<unknown>;
 }
 
 export const AuthContext = createContext<AuthContextValue | null>(null);

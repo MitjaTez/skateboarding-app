@@ -4,6 +4,8 @@ import { isAxiosError } from "axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { api } from "../lib/api";
 import type { LoginUser, SignUpUser, UserType } from "./types";
+import type { EditUserData } from "./types";
+import type { ForgotPasswordData, ResetPasswordData } from "./types";
 
 export const useSignup = (
   onSuccess: () => void,
@@ -61,4 +63,55 @@ export const useVerifyEmail = () =>
   useMutation({
     mutationFn: async (token: string) =>
       (await api.get("/auth/verify-email", { params: { token } })).data,
+  });
+
+export const useEditUser = (
+  onSuccess: () => void,
+  onError: (error: unknown) => void,
+) =>
+  useMutation({
+    mutationFn: async (data: EditUserData) => {
+      const form = new FormData();
+      if (data.username) form.append("username", data.username);
+      if (typeof data.age === "number") form.append("age", String(data.age));
+      if (data.hometown) form.append("hometown", data.hometown);
+      if (data.stance) form.append("stance", data.stance);
+      if (data.image) form.append("image", data.image); // field name the backend expects
+      if (data.deleteImage) form.append("deleteImage", "true");
+      return (await api.patch("/user/me", form)).data;
+    },
+    onSuccess,
+    onError,
+  });
+
+export const useDeleteProfile = (
+  onSuccess: () => void,
+  onError: (error: unknown) => void,
+) =>
+  useMutation({
+    mutationFn: async () => (await api.delete("/user/me")).data,
+    onSuccess,
+    onError,
+  });
+
+export const useForgotPassword = (
+  onSuccess: () => void,
+  onError: (error: unknown) => void,
+) =>
+  useMutation({
+    mutationFn: async (data: ForgotPasswordData) =>
+      (await api.post("/auth/forgot-password", data)).data,
+    onSuccess,
+    onError,
+  });
+
+export const useResetPassword = (
+  onSuccess: () => void,
+  onError: (error: unknown) => void,
+) =>
+  useMutation({
+    mutationFn: async (data: ResetPasswordData) =>
+      (await api.put("/auth/reset-password", data)).data,
+    onSuccess,
+    onError,
   });
