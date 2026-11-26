@@ -73,7 +73,7 @@ export default function Navbar() {
     >
       <Link href="/">
         <Image
-          src="/logo20.png"
+          src="/logo.png"
           alt="logo"
           width={240}
           height={40}

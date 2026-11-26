@@ -24,3 +24,22 @@ export interface LoginUser {
   email: string;
   password: string;
 }
+
+export interface EditUserData {
+  username?: string;
+  age?: number;
+  hometown?: string;
+  stance?: Stance;
+  image?: File | null;
+  deleteImage?: boolean;
+}
+
+export interface ForgotPasswordData {
+  email: string;
+}
+
+export interface ResetPasswordData {
+  resetToken: string;
+  newPassword: string;
+  confirmPassword: string;
+}

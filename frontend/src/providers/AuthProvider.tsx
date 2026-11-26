@@ -7,10 +7,14 @@ import { toast } from "sonner";
 import { AuthContext } from "../context/auth-context";
 import { handleError } from "../lib/handle-error";
 import {
+  useDeleteProfile,
+  useEditUser,
   useFetchUser,
   useLogin,
   useSignOut,
   useSignup,
+  useForgotPassword,
+  useResetPassword,
 } from "../services/auth-service";
 
 interface Props {
@@ -46,9 +50,56 @@ export const AuthProvider = ({ children }: Props) => {
     (error) => handleError(error, "Failed to log out"),
   );
 
+  const { mutateAsync: editUser } = useEditUser(
+    async () => {
+      await queryClient.invalidateQueries({ queryKey: ["user"] });
+      toast.success("Profile updated");
+    },
+    (error) => handleError(error, "Failed to edit profile"),
+  );
+
+  const { mutate: deleteProfile } = useDeleteProfile(
+    () => {
+      queryClient.setQueryData(["user"], null);
+      toast.success("Profile deleted");
+      router.push("/");
+    },
+    (error) => handleError(error, "Failed to delete profile"),
+  );
+
+  const { mutateAsync: forgotPassword } = useForgotPassword(
+    () => undefined, // the page shows the "check your email" screen
+    (error) => handleError(error, "Failed to request a password reset"),
+  );
+
+  const { mutateAsync: resetPassword } = useResetPassword(
+    () => toast.success("Password changed successfully!"),
+    (error) => handleError(error, "Failed to change password"),
+  );
+
   const value = useMemo(
-    () => ({ user, isLoading, signUp, login, signOut }),
-    [user, isLoading, signUp, login, signOut],
+    () => ({
+      user,
+      isLoading,
+      signUp,
+      login,
+      signOut,
+      editUser,
+      deleteProfile,
+      forgotPassword,
+      resetPassword,
+    }),
+    [
+      user,
+      isLoading,
+      signUp,
+      login,
+      signOut,
+      editUser,
+      deleteProfile,
+      forgotPassword,
+      resetPassword,
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
