@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   NotFoundException,
@@ -55,5 +56,44 @@ export class UserService {
     const result = await this.userRepository.delete(userId);
     if (!result.affected) throw new NotFoundException('User not found');
     return { message: 'User deleted successfully' };
+  }
+
+  /* ------------------------------- Admin only ----------------------------- */
+
+  findAll() {
+    return this.userRepository.find({
+      select: {
+        id: true,
+        username: true,
+        email: true,
+        age: true,
+        hometown: true,
+        stance: true,
+        role: true,
+        isBlocked: true,
+        profileImageUrl: true,
+      },
+      order: { id: 'ASC' },
+    });
+  }
+
+  async setBlocked(adminId: number, userId: number, blocked: boolean) {
+    if (adminId === userId) {
+      throw new BadRequestException("You can't block yourself");
+    }
+
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not found');
+
+    user.isBlocked = blocked;
+    await this.userRepository.save(user);
+    return { id: userId, isBlocked: blocked };
+  }
+
+  async deleteUserAsAdmin(adminId: number, userId: number) {
+    if (adminId === userId) {
+      throw new BadRequestException("You can't delete yourself here");
+    }
+    return this.deleteUser(userId);
   }
 }

@@ -67,6 +67,7 @@ export class StreetController {
     @AuthUser() user: User,
     @UploadedFiles() files: { images?: UploadedImage[] },
   ) {
+    console.log('creating');
     return this.streetService.create(dto, user.id, files?.images ?? []);
   }
 
