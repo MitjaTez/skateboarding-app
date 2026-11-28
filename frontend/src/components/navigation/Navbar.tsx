@@ -18,6 +18,8 @@ const DESKTOP_LINKS = [
   { href: "/form", label: "Submit a spot" },
 ];
 
+const ADMIN_DESKTOP_LINK = { href: "/admin-panel", label: "Admin" };
+
 const MOBILE_LINKS = [
   { href: "/", label: "HOME" },
   { href: "/skateparks", label: "SKATE PARKS" },
@@ -28,6 +30,8 @@ const MOBILE_LINKS = [
   { href: "/profile", label: "PROFILE" },
   { href: "/notifications", label: "NOTIFICATIONS" },
 ];
+
+const ADMIN_MOBILE_LINK = { href: "/admin-panel", label: "ADMIN PANEL" };
 
 export default function Navbar() {
   const [mobileMenu, setMobileMenu] = useState(false);
@@ -42,6 +46,13 @@ export default function Navbar() {
   const isHomePage = pathname === "/";
   const unreadCount = UNREAD_COUNT;
 
+  const desktopLinks = isAdmin
+    ? [...DESKTOP_LINKS, ADMIN_DESKTOP_LINK]
+    : DESKTOP_LINKS;
+  const mobileLinks = isAdmin
+    ? [...MOBILE_LINKS, ADMIN_MOBILE_LINK]
+    : MOBILE_LINKS;
+
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
       if (
@@ -51,8 +62,16 @@ export default function Navbar() {
         setAccountOpen(false);
       }
     };
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setAccountOpen(false);
+    };
+
     document.addEventListener("mousedown", onClick);
-    return () => document.removeEventListener("mousedown", onClick);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", onClick);
+      document.removeEventListener("keydown", onKeyDown);
+    };
   }, []);
 
   useEffect(() => {
@@ -62,6 +81,9 @@ export default function Navbar() {
 
   const menuItem =
     "block w-full rounded-sm px-2 py-1.5 text-left text-[16px] text-main-title-color hover:bg-[#2a2a2a]";
+
+  const mobileLink =
+    "link-corner-border block cursor-pointer px-2 py-1 text-[18px] text-white";
 
   return (
     <header
@@ -86,6 +108,7 @@ export default function Navbar() {
         onClick={() => setMobileMenu((prev) => !prev)}
         className="relative flex h-8 w-8 cursor-pointer flex-col items-center justify-center lg:hidden"
         aria-label="Toggle menu"
+        aria-expanded={mobileMenu}
       >
         <span
           className={`absolute left-0 h-0.5 w-6 rounded-sm bg-white transition-all duration-300 ease-in-out ${
@@ -100,7 +123,7 @@ export default function Navbar() {
       </button>
 
       <ul className="hidden items-center gap-5 lg:flex">
-        {DESKTOP_LINKS.map(({ href, label }) => (
+        {desktopLinks.map(({ href, label }) => (
           <li key={href} className="list-none">
             <Link
               href={href}
@@ -149,6 +172,12 @@ export default function Navbar() {
                 )}
               </Link>
 
+              {isAdmin && (
+                <Link href="/admin-panel" className={menuItem}>
+                  Admin panel
+                </Link>
+              )}
+
               {user ? (
                 <button onClick={() => signOut()} className={menuItem}>
                   Logout
@@ -156,12 +185,6 @@ export default function Navbar() {
               ) : (
                 <Link href="/login" className={menuItem}>
                   Login
-                </Link>
-              )}
-
-              {isAdmin && (
-                <Link href="/admin-panel" className={menuItem}>
-                  Admin panel
                 </Link>
               )}
             </div>
@@ -177,12 +200,9 @@ export default function Navbar() {
         }`}
       >
         <ul className="flex flex-col items-center justify-center gap-5">
-          {MOBILE_LINKS.map(({ href, label }) => (
+          {mobileLinks.map(({ href, label }) => (
             <li key={href} className="list-none">
-              <Link
-                href={href}
-                className="link-corner-border block cursor-pointer px-2 py-1 text-[18px] text-white"
-              >
+              <Link href={href} className={mobileLink}>
                 {label}
               </Link>
             </li>
@@ -190,32 +210,15 @@ export default function Navbar() {
 
           <li className="list-none">
             {user ? (
-              <button
-                onClick={() => signOut()}
-                className="link-corner-border block cursor-pointer px-2 py-1 text-[18px] text-white"
-              >
+              <button onClick={() => signOut()} className={mobileLink}>
                 LOGOUT
               </button>
             ) : (
-              <Link
-                href="/login"
-                className="link-corner-border block cursor-pointer px-2 py-1 text-[18px] text-white"
-              >
+              <Link href="/login" className={mobileLink}>
                 LOGIN
               </Link>
             )}
           </li>
-
-          {isAdmin && (
-            <li className="list-none">
-              <Link
-                href="/admin-panel"
-                className="link-corner-border block cursor-pointer px-2 py-1 text-[18px] text-white"
-              >
-                Admin panel
-              </Link>
-            </li>
-          )}
         </ul>
       </div>
     </header>

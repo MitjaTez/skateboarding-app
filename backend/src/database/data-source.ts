@@ -16,7 +16,7 @@ export const dataSourceOptions: DataSourceOptions = {
   logging: process.env.SKATEBOARD_LOGGING === 'true',
   entities: [join(root, '..', 'modules', 'entities', '*.entity.{ts,js}')],
   migrations: [join(root, 'migrations', '*.{ts,js}')],
-  synchronize: false,
+  synchronize: true,
 };
 
 export default new DataSource(dataSourceOptions);

@@ -1,9 +1,9 @@
 "use client";
 
 import { isAxiosError } from "axios";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "../lib/api";
-import type { LoginUser, SignUpUser, UserType } from "./types";
+import type { AdminUser, LoginUser, SignUpUser, UserType } from "./types";
 import type { EditUserData } from "./types";
 import type { ForgotPasswordData, ResetPasswordData } from "./types";
 
@@ -115,3 +115,38 @@ export const useResetPassword = (
     onSuccess,
     onError,
   });
+
+/* ------------------------------- Admin only ------------------------------- */
+
+const ADMIN_USERS_KEY = ["admin-users"];
+
+export const useFetchUsersAll = () =>
+  useQuery<AdminUser[]>({
+    queryKey: ADMIN_USERS_KEY,
+    queryFn: async () => (await api.get<AdminUser[]>("/user")).data,
+  });
+
+export const useBlockUser = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      userId,
+      action,
+    }: {
+      userId: number;
+      action: "block" | "unblock";
+    }) => (await api.patch(`/user/${userId}/${action}`)).data,
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ADMIN_USERS_KEY }),
+  });
+};
+
+export const useDeleteUser = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (userId: number) =>
+      (await api.delete(`/user/${userId}`)).data,
+    onSuccess: () =>
+      queryClient.invalidateQueries({ queryKey: ADMIN_USERS_KEY }),
+  });
+};

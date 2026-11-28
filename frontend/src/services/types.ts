@@ -43,3 +43,63 @@ export interface ResetPasswordData {
   newPassword: string;
   confirmPassword: string;
 }
+export interface StreetImage {
+  id: number;
+  url: string;
+}
+
+export interface StreetSpot {
+  id: number;
+  name: string;
+  spotType: string;
+  description: string;
+  bestTimeType: string;
+  parkingType: string;
+  surfaceType: string;
+  pedestriansType: string;
+  latitude: number;
+  longitude: number;
+  status: "PENDING" | "APPROVED" | "REJECTED";
+  createdAt: string;
+  updatedAt: string;
+  createdById: number | null;
+  images: StreetImage[];
+  createdBy: {
+    id: number;
+    username: string;
+    profileImageUrl: string | null;
+  } | null;
+}
+
+export interface StreetListResponse {
+  data: StreetSpot[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
+export interface CheckIn {
+  id: number;
+  streetId: number;
+  userId: number;
+  createdAt: string;
+  user?: { id: number; username: string; profileImageUrl: string | null };
+}
+
+export interface CreateStreetSpotData {
+  name: string;
+  spotType: string;
+  bestTimeType: string;
+  parkingType: string;
+  surfaceType: string;
+  pedestriansType: string;
+  description?: string;
+  latitude: number;
+  longitude: number;
+  images: File[];
+}
+
+export interface AdminUser extends Omit<UserType, "profileImage"> {
+  isBlocked: boolean;
+  profileImageUrl: string | null;
+}

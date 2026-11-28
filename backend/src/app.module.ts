@@ -11,6 +11,7 @@ import { EmailModule } from './email/email.module.js';
 import { UploadModule } from './upload/upload.module.js';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { StreetModule } from './street/street.module.js';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
     AuthModule,
     EmailModule,
     UploadModule,
+    StreetModule,
   ],
   controllers: [AppController],
   providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],
